@@ -214,7 +214,7 @@ public class SearchTextServiceImpl implements ISearchTextService {
           // Set the updated body back to the page
           assignment.setDescription(body);
 
-          updateAssignments(courseId, assignment);
+          updateAssignments(courseId, assignment.getId(), assignment);
         }
         break;
 
@@ -355,11 +355,11 @@ public class SearchTextServiceImpl implements ISearchTextService {
    * @return the optional
    * @throws IOException Signals that an I/O exception has occurred.
    */
-  public Optional<Assignment> updateAssignments(String courseId, Assignment assignment)
-      throws IOException {
+  public Optional<Assignment> updateAssignments(String courseId, Integer assignmentId,
+      Assignment assignment) throws IOException {
     AssignmentWriter assignmentWriter =
         tokenHelper.getApiFactory().getWriter(AssignmentWriter.class, tokenHelper.getToken());
-    return assignmentWriter.editAssignment(courseId, assignment);
+    return assignmentWriter.editAssignment(courseId, assignmentId, assignment);
   }
 
   /**
