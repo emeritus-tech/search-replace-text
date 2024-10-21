@@ -10,18 +10,21 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.emeritus.canvas.interfaces.AssignmentReader;
 import org.emeritus.canvas.interfaces.AssignmentWriter;
+import org.emeritus.canvas.interfaces.CourseReader;
 import org.emeritus.canvas.interfaces.DiscussionTopicReader;
 import org.emeritus.canvas.interfaces.DiscussionTopicWriter;
 import org.emeritus.canvas.interfaces.ModuleReader;
 import org.emeritus.canvas.interfaces.PageReader;
 import org.emeritus.canvas.interfaces.PageWriter;
 import org.emeritus.canvas.lms.rest.api.constant.ParamConstants;
+import org.emeritus.canvas.model.Course;
 import org.emeritus.canvas.model.DiscussionTopic;
 import org.emeritus.canvas.model.Module;
 import org.emeritus.canvas.model.ModuleItem;
 import org.emeritus.canvas.model.Page;
 import org.emeritus.canvas.model.assignment.Assignment;
 import org.emeritus.canvas.requestOptions.DiscussionTopicOptions;
+import org.emeritus.canvas.requestOptions.GetSingleCourseOptions;
 import org.emeritus.canvas.requestOptions.ListCourseAssignmentsOptions;
 import org.emeritus.canvas.requestOptions.ListCoursePagesOptions;
 import org.emeritus.canvas.requestOptions.ListModulesOptions;
@@ -325,6 +328,20 @@ public class SearchTextServiceImpl implements ISearchTextService {
   }
 
   /**
+   * Gets the single course.
+   *
+   * @param courseId the course id
+   * @return the single course
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
+  private Optional<Course> getSingleCourse(String courseId) throws IOException {
+    CourseReader courseReader =
+        tokenHelper.getApiFactory().getReader(CourseReader.class, tokenHelper.getToken());
+    GetSingleCourseOptions getSingleCourseOptions = new GetSingleCourseOptions(courseId);
+    return courseReader.getSingleCourse(getSingleCourseOptions);
+  }
+
+  /**
    * Process discussions.
    *
    * @param discussionTopic the discussion topic
@@ -423,6 +440,7 @@ public class SearchTextServiceImpl implements ISearchTextService {
     List<Page> pages = listPagesInCourse(courseId);
     List<Assignment> assignments = listCourseAssignments(courseId);
     List<DiscussionTopic> discussionTopics = getCourseAllDiscussionTopics(courseId);
+    Optional<Course> course = getSingleCourse(courseId);
 
     // Find pages and assignments containing the text, handling potential nulls
     List<PageInfo> pageInfoList = findPagesWithText(pages, textToBeReplaced);
@@ -439,8 +457,10 @@ public class SearchTextServiceImpl implements ISearchTextService {
 
     // Build CoursePageInfo object only if there are matching pages or assignments
     if (!combinedPageInfoList.isEmpty()) {
-      CoursePageInfo coursePageInfo = CoursePageInfo.builder().courseId(courseId)
-          .sourceText(sourceText).courseName(courseId).pageInfoList(combinedPageInfoList).build();
+      CoursePageInfo coursePageInfo =
+          CoursePageInfo.builder().courseId(courseId).sourceText(sourceText)
+              .courseName(course.isPresent() ? course.get().getName() : StringUtils.EMPTY)
+              .pageInfoList(combinedPageInfoList).build();
       coursePageInfoList.add(coursePageInfo);
     }
   }
