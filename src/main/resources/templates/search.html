@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Feature-Policy" content="geolocation *; microphone *; camera *; midi *; encrypted-media *; autoplay *; clipboard-write *; display-capture *; web-share *">
+<title th:text="#{title}">Content studio</title>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<div th:if="${model.brandColors != null}" th:replace="brandcss::cssoverride(${model.brandColors})"></div>
+</head>
+
+<body>
+	<div>
+		Welcome
+	</div>
+	<br><br>
+</body>
+<script th:inline="javascript">
+	var appContext = /*[[@{/}]]*/ '';
+	var baseUrl =/*[[${baseUrl}]]*/'';
+</script>
+<script type="text/javascript" th:src="@{/js/sessionmaintainer.js}"></script>
+<script type="text/javascript" th:src="@{/js/frameresize.js}"></script>
+</html>

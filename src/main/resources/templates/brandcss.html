@@ -1,0 +1,78 @@
+<style th:inline="text" th:fragment="cssoverride(colors)">	
+[# th:if="${colors != null}"]	
+[# th:if="${!#strings.isEmpty(colors['ic-brand-primary'])}"]
+.progress-bar {
+	background-color: [[${colors["ic-brand-primary"]}]] !important;
+}
+
+.btn--primary {
+	background-color: [[${colors["ic-brand-primary"]}]] !important;
+}
+
+.btn-primary {
+	background-color: [[${colors["ic-brand-primary"]}]] !important;
+}
+
+.bg-primary {
+	background-color: [[${colors["ic-brand-primary"]}]] !important;
+}
+
+.chip.variant-1:focus {
+	border: 1px solid [[${colors["ic-brand-primary"]}]] !important;
+}
+
+.chip.variant-1.status-active {
+	background-color: [[${colors["ic-brand-primary"]}]] !important;
+}
+
+.chip.variant-1.status-locked-active {
+	background-color: [[${colors["ic-brand-primary"]}]] !important;
+}
+
+.bp--toast-content.toast-primary {
+	border-left: 4px solid [[${colors["ic-brand-primary"]}]] !important;
+}
+
+.end_summary_banner_background_pass {
+	background-color: [[${colors["ic-brand-primary"]}]] !important;
+}
+
+.end_summary_banner_background_inprogress {
+	background-color: [[${colors["ic-brand-primary"]}]]1a !important;
+}
+
+.progress--circular--inprogress::before {
+	background:conic-gradient([[${colors["ic-brand-primary"]}]] var(--progress),[[${colors["ic-brand-primary"]}]]4d 0)!important;
+}
+
+.loader__circle::after {
+	border-top-color: [[${colors["ic-brand-primary"]}]] !important;
+}
+
+.go-to-dashboard{
+	background:[[${colors["ic-brand-primary"]}]] !important;
+}
+	 
+.go-to-dashboard:hover{
+	background:[[${colors["ic-brand-primary"]}]] !important;
+}
+
+.video-thumbnail-background{
+	background:[[${colors["ic-brand-primary"]}]] !important;
+	opacity:0.7 !important;
+}
+
+.tab_selected a {
+	background-color: [[${colors["ic-brand-primary"]}]] !important;
+}
+
+[/] 
+  
+[# th:if="${!#strings.isEmpty(colors['ic-brand-button--secondary-bgd'])}"]
+.chip:hover {
+	background-color: [[${colors["ic-brand-button--secondary-bgd"]}]] !important;
+	color: #ffffff !important;
+}
+[/] 
+[/]
+</style>

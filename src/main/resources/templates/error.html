@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://emeritus-tech.github.io/blueprint-landing-page/assets/css/bootstrap.min.css" th:if="${isPage != null && isPage}"/>
+	<style type=text/css>
+		.ic-Error-page {
+			text-align: center;
+		}
+
+		.ic-Error-page .ic-Error-img {
+			margin-top: 2rem;
+			max-width: 350px;
+		}
+		.bp-referral {
+		    .modal__body {
+		        display: block;
+		    }
+		}
+	</style>
+	<script th:inline="javascript">
+		var appContext = /*[[@{/}]]*/ '';
+		var isReload =/*[[${isReload}]]*/'';
+		var baseUrl =/*[[${baseUrl}]]*/'';
+	</script>
+</head>
+
+<body>
+	<div class="ic-Error-page">
+		<img class="ic-Error-img" role="presentation" aria-hidden="true" th:src="@{/images/ErrorShip.svg}">
+		<p style="font-size:large;" th:if="${#messages.msg('error.unknown.trylater')}">The application has encountered an unknown error. Please try later.</p>
+	</div>
+<span style="visibility: hidden; display: none;">
+	<table>
+    <tr>
+        <td>Date</td>
+        <td th:text="${timestamp}"/>
+    </tr>
+    <tr>
+        <td>Path</td>
+        <td th:text="${path}"/>
+    </tr>
+    <tr>
+        <td>Error</td>
+        <td th:text="${error}"/>
+    </tr>
+    <tr>
+        <td>Status</td>
+        <td th:text="${status}"/>
+    </tr>
+    <tr>
+        <td>Message</td>
+        <td th:text="${message}"/>
+    </tr>
+    <tr>
+        <td>Exception</td>
+        <td th:text="${exception}"/>
+    </tr>
+    <tr>
+        <td>Trace</td>
+        <td>
+            <pre th:text="${trace}"/>
+        </td>
+    </tr>
+	</table>	
+</span>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+<configuration>
+   <springProperty name="logDirectoryPath" source="log.directory.path" />
+
+	<appender name="console"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>
+				%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</Pattern>
+		</layout>
+	</appender>
+	
+	<appender name="rollingFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${logDirectoryPath}/service.log</file>
+		<encoder>
+			<pattern>
+				<pattern>%d{ISO8601} %-5level [%thread] %logger{1}: %msg%n
+				</pattern>
+			</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      		<!-- daily roll over -->
+      		<fileNamePattern>${logDirectoryPath}/archived/archive.%d{yyyy-MM-dd}.log</fileNamePattern>
+    	</rollingPolicy>
+	</appender>
+	
+	<!-- Log all at INFO level to console -->
+	<root level="info">
+		<appender-ref ref="console" />
+	</root>
+	<!-- Log "org.emeritus*" at INFO level -->
+	<logger name="org.emeritus" level="debug">
+		<appender-ref ref="rollingFile" />
+	</logger>
+
+</configuration>

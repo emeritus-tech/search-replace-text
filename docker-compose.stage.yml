@@ -1,0 +1,21 @@
+version: '3.7'
+services:
+  canvas-search:
+    image: emeritus/canvas-search
+    container_name: canvas-search
+    ports:
+      - 8097:8097   
+    environment:
+      - spring.profiles.active=stage
+      - canvas.instance=canvas-test.emeritus.org
+      - server.servlet.context-path=/search
+      - jasypt.encryptor.password=eruditus
+    command: [
+      "java",
+      "-Xms1024m",
+      "-Xmx2048m",
+      "-jar",
+      "/app/canvas-search.jar"
+    ]
+    volumes:
+      - '/canvas-search/logs:/logs/'

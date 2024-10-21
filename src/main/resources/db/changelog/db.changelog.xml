@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd
+																																																															 http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+	<!-- Start -->
+	<changeSet id="1" author="liquibase">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="activity_status" />
+			</not>
+		</preConditions>
+		<createTable tableName="activity_status">
+			<column name="id" type="integer" autoIncrement="true">
+				<constraints primaryKey="false" />
+			</column>
+			<column name="widget_name" type="character varying"></column>
+			<column name="activity_name" type="character varying"></column>
+			<column name="course_id" type="character varying"></column>
+			<column name="user_id" type="character varying"></column>
+			<column name="status" type="character varying"></column>
+			<column name="created_date" type="timestamp"></column>
+			<column name="last_modified_date" type="timestamp"></column>
+		</createTable>
+	</changeSet>
+	<changeSet id="2" author="liquibase">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="course_airtable_info" />
+			</not>
+		</preConditions>
+		<createTable tableName="course_airtable_info">
+			<column name="id" type="integer" autoIncrement="true">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="course_id" type="integer"></column>
+			<column name="airtable_info" type="jsonb"></column>
+			<column name="start_date" type="timestamp"></column>
+			<column name="end_date" type="timestamp"></column>
+			<column name="access_date" type="timestamp"></column>
+			<column name="access_until_date" type="timestamp"></column>
+			<column name="created_date" type="timestamp"></column>
+			<column name="last_modified_date" type="timestamp"></column>
+		</createTable>
+	</changeSet>
+	<changeSet id="3" author="liquibase">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="week_info" />
+			</not>
+		</preConditions>
+		<createTable tableName="week_info">
+			<column name="id" type="integer" autoIncrement="true">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="course_id" type="integer"></column>
+			<column name="week_seq" type="integer"></column>
+			<column name="name" type="character varying"></column>
+			<column name="start_date" type="timestamp"></column>
+			<column name="end_date" type="timestamp"></column>
+			<column name="created_date" type="timestamp"></column>
+			<column name="last_modified_date" type="timestamp"></column>
+		</createTable>
+	</changeSet>
+	<changeSet id="4" author="liquibase">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="week_module_required_items" />
+			</not>
+		</preConditions>
+		<createTable tableName="week_module_required_items">
+			<column name="id" type="integer" autoIncrement="true">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="week_id" type="integer">
+				<constraints nullable="false" foreignKeyName="fk_week_module" references="week_info(id)"/>
+			</column>
+			<column name="module_id" type="integer"></column>
+			<column name="module_name" type="character varying"></column>
+			<column name="module_start_date" type="timestamp"></column>
+			<column name="module_end_date" type="timestamp"></column>
+			<column name="course_id" type="integer"></column>
+			<column name="item_id" type="integer"></column>
+			<column name="item_name" type="character varying"></column>
+			<column name="item_due_date" type="timestamp"></column>
+			<column name="created_date" type="timestamp"></column>
+			<column name="last_modified_date" type="timestamp"></column>
+		</createTable>
+	</changeSet>
+	<changeSet id="5" author="liquibase">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="user_module_info" />
+			</not>
+		</preConditions>
+		<createTable tableName="user_module_info">
+			<column name="id" type="integer" autoIncrement="true">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="canvas_user_id" type="integer"></column>
+			<column name="course_id" type="integer"></column>
+			<column name="week_id" type="integer">
+				<constraints nullable="false" foreignKeyName="fk_week_module" references="week_info(id)"/>
+			</column>
+			<column name="module_id" type="integer"></column>
+			<column name="module_completion_percentage" type="character varying"></column>
+			<column name="module_status" type="character varying"></column>
+			<column name="created_date" type="timestamp"></column>
+			<column name="last_modified_date" type="timestamp"></column>
+		</createTable>
+	</changeSet>
+	<changeSet id="6" author="liquibase">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="user_item_info" />
+			</not>
+		</preConditions>
+		<createTable tableName="user_item_info">
+			<column name="id" type="integer" autoIncrement="true">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="canvas_user_id" type="integer"></column>
+			<column name="course_id" type="integer"></column>
+			<column name="week_id" type="integer">
+				<constraints nullable="false" foreignKeyName="fk_week_module" references="week_info(id)"/>
+			</column>
+			<column name="module_id" type="integer"></column>
+			<column name="item_id" type="integer"></column>
+			<column name="item_status" type="character varying"></column>
+			<column name="item_until_date" type="timestamp"></column>
+			<column name="created_date" type="timestamp"></column>
+			<column name="last_modified_date" type="timestamp"></column>
+		</createTable>
+	</changeSet>
+	<changeSet id="7" author="liquibase">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="course_end_user_status" />
+			</not>
+		</preConditions>
+		<createTable tableName="course_end_user_status">
+			<column name="id" type="integer" autoIncrement="true">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="course_id" type="integer"></column>
+			<column name="canvas_user_id" type="integer"></column>
+			<column name="certificate_id" type="integer"></column>
+			<column name="certificate_name" type="character varying"></column>
+			<column name="certificate_url" type="character varying"></column>
+			<column name="certificate_preview" type="character varying"></column>
+			<column name="organization_name" type="character varying"></column>
+			<column name="issued_on" type="timestamp"></column>
+			<column name="expired_on" type="timestamp"></column>
+			<column name="status" type="character varying"></column>
+			<column name="created_date" type="timestamp"></column>
+			<column name="last_modified_date" type="timestamp"></column>
+		</createTable>
+	</changeSet>
+</databaseChangeLog>
