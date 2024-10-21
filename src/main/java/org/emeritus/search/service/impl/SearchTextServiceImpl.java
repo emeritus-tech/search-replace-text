@@ -387,13 +387,11 @@ public class SearchTextServiceImpl implements ISearchTextService {
    * @return the optional
    * @throws IOException Signals that an I/O exception has occurred.
    */
-  // TODO
   public Optional<DiscussionTopic> updateDiscussionTopic(String courseId, DiscussionTopic topic)
       throws IOException {
     DiscussionTopicWriter topicWriter =
         tokenHelper.getApiFactory().getWriter(DiscussionTopicWriter.class, tokenHelper.getToken());
-    // return topicWriter.updateDiscussionTopic(topic, courseId);
-    return null;
+    return topicWriter.updateDiscussionTopic(topic, courseId);
   }
 
   /**
@@ -445,6 +443,8 @@ public class SearchTextServiceImpl implements ISearchTextService {
     // Find pages and assignments containing the text, handling potential nulls
     List<PageInfo> pageInfoList = findPagesWithText(pages, textToBeReplaced);
     List<PageInfo> assignmentPageInfoList = findAssignmentsWithText(assignments, textToBeReplaced);
+    List<PageInfo> discussionPageInfoList =
+        findDiscussionTopicsWithText(discussionTopics, textToBeReplaced);
 
     // Ensure pageInfoList is not null and create a mutable list
     List<PageInfo> combinedPageInfoList =
@@ -453,6 +453,11 @@ public class SearchTextServiceImpl implements ISearchTextService {
     // Add assignmentPageInfoList to combinedPageInfoList, handling null case
     if (!isEmptyOrNull(assignmentPageInfoList)) {
       combinedPageInfoList.addAll(assignmentPageInfoList);
+    }
+
+    // Add discussionPageInfoList to combinedPageInfoList, handling null case
+    if (!isEmptyOrNull(discussionPageInfoList)) {
+      combinedPageInfoList.addAll(discussionPageInfoList);
     }
 
     // Build CoursePageInfo object only if there are matching pages or assignments
