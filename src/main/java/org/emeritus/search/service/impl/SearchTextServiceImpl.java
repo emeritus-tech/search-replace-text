@@ -495,8 +495,9 @@ public class SearchTextServiceImpl implements ISearchTextService {
     }
 
     // Use Stream API to filter assignments that contain the search text in the body
-    return assignments.stream()
-        .filter(assignment -> assignment.getDescription().contains(textToFind)).map(assignment -> {
+    return assignments.stream().filter(
+        assignment -> assignment.isPublished() && assignment.getDescription().contains(textToFind))
+        .map(assignment -> {
           Integer occurrences = countOccurrences(assignment.getDescription(), textToFind);
           return PageInfo.builder().pageTitle(assignment.getName()).occurences(occurrences).build();
         }).toList();
@@ -519,9 +520,8 @@ public class SearchTextServiceImpl implements ISearchTextService {
     }
 
     // Use Stream API to filter discussionTopics that contain the search text in the body
-    return discussionTopics.stream()
-        .filter(discussionTopic -> discussionTopic.getMessage().contains(textToFind))
-        .map(discussionTopic -> {
+    return discussionTopics.stream().filter(discussionTopic -> discussionTopic.isPublished()
+        && discussionTopic.getMessage().contains(textToFind)).map(discussionTopic -> {
           // Count occurrences of the search text
           Integer occurrences = countOccurrences(discussionTopic.getMessage(), textToFind);
 
