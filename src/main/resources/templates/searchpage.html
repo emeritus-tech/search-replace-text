@@ -141,12 +141,12 @@
 			</div>
 			<div class="row">
 				<div class="col-md-12">
-					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-						<div class="panel panel-default">
+					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"  th:if="${!#lists.isEmpty(model.matchingPages)}">
+						<div class="panel panel-default" th:each="matchingPage : ${model.matchingPages}">
 							<div class="panel-heading" role="tab" id="headingOne">
 								<h4 class="panel-title">
 									<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
-										aria-expanded="true" aria-controls="collapseOne">
+										aria-expanded="true" aria-controls="collapseOne" th:text="'Course Id: ' + ${matchingPage.courseId} + ' (' + ${matchingPage.courseName} + ')'">
 										Section 1
 									</a>
 								</h4>
@@ -162,105 +162,13 @@
 												<th>Ocuurences</th>
 											</tr>
 										</thead>
-										<tbody>
-											<tr>
-												<td>John</td>
-												<td>Doe</td>
-												<td>john@example.com</td>
-											</tr>
-											<tr>
-												<td>Mary</td>
-												<td>Moe</td>
-												<td>mary@example.com</td>
-											</tr>
-											<tr>
-												<td>July</td>
-												<td>Dooley</td>
-												<td>july@example.com</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
-						<div class="panel panel-default">
-							<div class="panel-heading" role="tab" id="headingTwo">
-								<h4 class="panel-title">
-									<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-										href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-										Section 2
-									</a>
-								</h4>
-							</div>
-							<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel"
-								aria-labelledby="headingTwo">
-								<div class="panel-body">
-									<table class="table table-bordered">
-										<thead>
-											<tr>
-												<th>Firstname</th>
-												<th>Lastname</th>
-												<th>Email</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td>John</td>
-												<td>Doe</td>
-												<td>john@example.com</td>
-											</tr>
-											<tr>
-												<td>Mary</td>
-												<td>Moe</td>
-												<td>mary@example.com</td>
-											</tr>
-											<tr>
-												<td>July</td>
-												<td>Dooley</td>
-												<td>july@example.com</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
-						<div class="panel panel-default">
-							<div class="panel-heading" role="tab" id="headingThree">
-								<h4 class="panel-title">
-									<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
-										href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-										Section 3
-									</a>
-								</h4>
-							</div>
-							<div id="collapseThree" class="panel-collapse collapse" role="tabpanel"
-								aria-labelledby="headingThree">
-								<div class="panel-body">
-									<table class="table table-bordered">
-										<thead>
-											<tr>
-												<th>Firstname</th>
-												<th>Lastname</th>
-												<th>Email</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td>John</td>
-												<td>Doe</td>
-												<td>john@example.com</td>
-											</tr>
-											<tr>
-												<td>Mary</td>
-												<td>Moe</td>
-												<td>mary@example.com</td>
-											</tr>
-											<tr>
-												<td>July</td>
-												<td>Dooley</td>
-												<td>july@example.com</td>
-											</tr>
-										</tbody>
+											<tbody th:each="pageInfo : ${matchingPage.pageInfoList}">
+											    <tr>
+											        <td th:text="${pageInfo.pageTitle}"></td>
+											        <td th:text="${matchingPage.sourceText}"></td>
+											        <td th:text="${pageInfo.occurences}"></td>
+											    </tr>
+											</tbody>
 									</table>
 								</div>
 							</div>
