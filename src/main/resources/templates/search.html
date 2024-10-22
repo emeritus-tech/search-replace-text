@@ -13,7 +13,6 @@
 
 <body>
 	<div>
-		Welcome
 		<th:block th:if="${model.matchingPages != null && not #lists.isEmpty(model.matchingPages)}">
 			<div th:include="searchpage::searchpage(${model.matchingPages})"></div>
 		</th:block>
