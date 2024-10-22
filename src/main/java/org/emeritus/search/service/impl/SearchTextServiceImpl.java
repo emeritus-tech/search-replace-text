@@ -442,9 +442,10 @@ public class SearchTextServiceImpl implements ISearchTextService {
 
     // Find pages and assignments containing the text, handling potential nulls
     List<PageInfo> pageInfoList = findPagesWithText(pages, textToBeReplaced);
-    List<PageInfo> assignmentPageInfoList = findAssignmentsWithText(assignments, textToBeReplaced);
+    List<PageInfo> assignmentPageInfoList =
+        findAssignmentsWithText(courseId, assignments, textToBeReplaced);
     List<PageInfo> discussionPageInfoList =
-        findDiscussionTopicsWithText(discussionTopics, textToBeReplaced);
+        findDiscussionTopicsWithText(courseId, discussionTopics, textToBeReplaced);
 
     // Ensure pageInfoList is not null and create a mutable list
     List<PageInfo> combinedPageInfoList =
@@ -499,6 +500,7 @@ public class SearchTextServiceImpl implements ISearchTextService {
     // Use Stream API to filter pages that contain the search text in the body
     return pages.stream().filter(page -> page.getPublished() && page.getBody().contains(textToFind))
         .map(page -> {
+          // Count occurrences of the search text
           Integer occurrences = countOccurrences(page.getBody(), textToFind);
           return PageInfo.builder().pageTitle(page.getTitle()).redirectUrl(page.getHtmlUrl())
               .occurences(occurrences).build();
@@ -513,7 +515,8 @@ public class SearchTextServiceImpl implements ISearchTextService {
    * @return the list
    */
   // Method to find assignments containing the specific text
-  public List<PageInfo> findAssignmentsWithText(List<Assignment> assignments, String textToFind) {
+  public List<PageInfo> findAssignmentsWithText(String courseId, List<Assignment> assignments,
+      String textToFind) {
 
     // Validate input to avoid processing on null or empty text
     if (textToFind == null || textToFind.isEmpty()) {
@@ -524,21 +527,27 @@ public class SearchTextServiceImpl implements ISearchTextService {
     return assignments.stream().filter(
         assignment -> assignment.isPublished() && assignment.getDescription().contains(textToFind))
         .map(assignment -> {
+          // Count occurrences of the search text
           Integer occurrences = countOccurrences(assignment.getDescription(), textToFind);
-          return PageInfo.builder().pageTitle(assignment.getName()).occurences(occurrences).build();
+          String redirectUrl =
+              String.format("%s/courses/%s/assignments/%s", baseUrl, courseId, assignment.getId());
+          return PageInfo.builder().pageTitle(assignment.getName()).redirectUrl(redirectUrl)
+              .occurences(occurrences).build();
         }).toList();
   }
 
   /**
    * Find discussion topics with text.
+   * 
+   * @param courseId
    *
    * @param discussionTopics the discussion topics
    * @param textToFind the text to find
    * @return the list
    */
   // Method to find discussionTopics containing the specific text
-  public List<PageInfo> findDiscussionTopicsWithText(List<DiscussionTopic> discussionTopics,
-      String textToFind) {
+  public List<PageInfo> findDiscussionTopicsWithText(String courseId,
+      List<DiscussionTopic> discussionTopics, String textToFind) {
 
     // Validate input to avoid processing on null or empty text
     if (textToFind == null || textToFind.isEmpty()) {
@@ -550,10 +559,11 @@ public class SearchTextServiceImpl implements ISearchTextService {
         && discussionTopic.getMessage().contains(textToFind)).map(discussionTopic -> {
           // Count occurrences of the search text
           Integer occurrences = countOccurrences(discussionTopic.getMessage(), textToFind);
-
+          String redirectUrl = String.format("%s/courses/%s/discussion_topics/%s", baseUrl,
+              courseId, discussionTopic.getId());
           // Map to PageInfo with the title and occurrences
-          return PageInfo.builder().pageTitle(discussionTopic.getTitle()).occurences(occurrences)
-              .build();
+          return PageInfo.builder().pageTitle(discussionTopic.getTitle()).redirectUrl(redirectUrl)
+              .occurences(occurrences).build();
         }).toList();
   }
 
