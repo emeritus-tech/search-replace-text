@@ -46,7 +46,7 @@
 										</thead>
 											<tbody th:each="pageInfo : ${matchingPage.pageInfoList}">
 											    <tr>
-											        <td><a th:href="${pageInfo.redirectUrl} + '?searchTerm=' + ${matchingPage.sourceText}" target="_blank" th:text="${pageInfo.pageTitle}"></a></td>
+											        <td><a th:href="${pageInfo.redirectUrl}" target="_blank" th:text="${pageInfo.pageTitle}"></a></td>
 											        <td th:text="${matchingPage.sourceText}"></td>
 											        <td th:text="${pageInfo.occurences}"></td>
 											    </tr>
