@@ -1,0 +1,213 @@
+<div th:fragment="searchpage(model)">
+
+<html>
+<head>
+<title>Bootstrap Accordion : Demo 80</title>
+<!-- Include Bootstrap CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<!-- Include Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<style>
+a:hover,a:focus{
+    text-decoration: none;
+    outline: none;
+}
+#accordion .panel{
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    margin-bottom: 6px;
+}
+#accordion .panel-heading{
+    padding: 0;
+}
+#accordion .panel-title a{
+    display: block;
+    padding: 25px 40px;
+    background: #fff;
+    font-size: 15px;
+    font-weight: bold;
+    color: #119316;
+    text-transform: uppercase;
+    border: 1px solid #eaeaea;
+    border-left: 3px solid #119316;
+    position: relative;
+    transition: all 0.3s ease 0s;
+}
+#accordion .panel-title a.collapsed{
+    color: #333;
+}
+#accordion .panel-title a:before,
+#accordion .panel-title a.collapsed:before{
+    content: "\f107";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 14px;
+    color: #333;
+    line-height: 24px;
+    position: absolute;
+    top: 23px;
+    right: 25px;
+}
+#accordion .panel-title a.collapsed:before{
+    content: "\f106";
+}
+#accordion .panel-title a:hover,
+#accordion .panel-title a.collapsed:hover,
+#accordion .panel-title a:before,
+#accordion .panel-title a:hover:before{
+    color: #119316;
+}
+#accordion .panel-body{
+    padding: 15px 27px;
+    font-size: 14px;
+    color: #808080;
+    line-height: 23px;
+    border: 1px solid #eaeaea;
+    border-top: none;
+    border-left: 3px solid #eaeaea;
+}
+#accordion .panel-body p{
+    margin-bottom: 0;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+		<div class="col-md-12">
+		  <h2>Course Information</h2>
+		  <p>Course Id: 158</p>
+		  <p>Course Name: ACME-Space-Beginner-New</p>
+		</div>  
+	</div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingOne">
+                        <h4 class="panel-title">
+                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Section 1
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                        <div class="panel-body">
+                            <p><table class="table table-bordered">
+								<thead>
+								  <tr>
+									<th>Firstname</th>
+									<th>Lastname</th>
+									<th>Email</th>
+								  </tr>
+								</thead>
+								<tbody>
+								  <tr>
+									<td>John</td>
+									<td>Doe</td>
+									<td>john@example.com</td>
+								  </tr>
+								  <tr>
+									<td>Mary</td>
+									<td>Moe</td>
+									<td>mary@example.com</td>
+								  </tr>
+								  <tr>
+									<td>July</td>
+									<td>Dooley</td>
+									<td>july@example.com</td>
+								  </tr>
+								</tbody>
+							  </table></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingTwo">
+                        <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Section 2
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                        <div class="panel-body">
+                            <p><table class="table table-bordered">
+								<thead>
+								  <tr>
+									<th>Firstname</th>
+									<th>Lastname</th>
+									<th>Email</th>
+								  </tr>
+								</thead>
+								<tbody>
+								  <tr>
+									<td>John</td>
+									<td>Doe</td>
+									<td>john@example.com</td>
+								  </tr>
+								  <tr>
+									<td>Mary</td>
+									<td>Moe</td>
+									<td>mary@example.com</td>
+								  </tr>
+								  <tr>
+									<td>July</td>
+									<td>Dooley</td>
+									<td>july@example.com</td>
+								  </tr>
+								</tbody>
+							  </table></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingThree">
+                        <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                Section 3
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                        <div class="panel-body">
+                            <p><table class="table table-bordered">
+								<thead>
+								  <tr>
+									<th>Firstname</th>
+									<th>Lastname</th>
+									<th>Email</th>
+								  </tr>
+								</thead>
+								<tbody>
+								  <tr>
+									<td>John</td>
+									<td>Doe</td>
+									<td>john@example.com</td>
+								  </tr>
+								  <tr>
+									<td>Mary</td>
+									<td>Moe</td>
+									<td>mary@example.com</td>
+								  </tr>
+								  <tr>
+									<td>July</td>
+									<td>Dooley</td>
+									<td>july@example.com</td>
+								  </tr>
+								</tbody>
+							  </table></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+  
+</div>

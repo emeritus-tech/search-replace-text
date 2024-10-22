@@ -14,6 +14,9 @@
 <body>
 	<div>
 		Welcome
+		<th:block th:if="${model.matchingPages != null && not #lists.isEmpty(model.matchingPages)}">
+			<div th:include="searchpage::searchpage(${model.matchingPages})"></div>
+		</th:block>
 	</div>
 	<br><br>
 </body>
@@ -23,4 +26,5 @@
 </script>
 <script type="text/javascript" th:src="@{/js/sessionmaintainer.js}"></script>
 <script type="text/javascript" th:src="@{/js/frameresize.js}"></script>
+<script type="text/javascript" th:src="@{/js/searchtext.js}"></script>
 </html>
