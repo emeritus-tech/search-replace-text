@@ -57,12 +57,6 @@ public class SearchPageController {
     SearchPageModel pageModel = buildSearchPageModel(courseId);
     model.addAttribute("model", pageModel);
     model.addAttribute("baseUrl", baseUrl);
-    SearchReplaceDto searchReplaceDto = SearchReplaceDto.builder().courseIds(Arrays.asList("1800"))
-        .sourceText("less than 60%").textToBeReplace("less than 50%").build();
-    Boolean isFound = searchTextService.searchTextAndReplaceAcrossCourses(searchReplaceDto);
-    logger.info("isFound : {} ", isFound);
-    List<CoursePageInfo> matchingPages = searchTextService.getMatchingPages(searchReplaceDto);
-    logger.info("matchesPages : {} ", matchingPages.get(0));
     return "search.html";
   }
 
@@ -100,8 +94,13 @@ public class SearchPageController {
     pageModel.setLoggedInUserId(canvasUserId);
     pageModel.setBaseUrl(baseUrl);
     pageModel.setBrandColors(canvasService.getBrandColors());
-
-
+    SearchReplaceDto searchReplaceDto = SearchReplaceDto.builder().courseIds(Arrays.asList("1800"))
+        .sourceText("Establishing security-1").textToBeReplace("Establishing security").build();
+    Boolean isFound = searchTextService.searchTextAndReplaceAcrossCourses(searchReplaceDto);
+    logger.info("isFound : {} ", isFound);
+    List<CoursePageInfo> matchingPages = searchTextService.getMatchingPages(searchReplaceDto);
+    logger.info("matchesPages : {} ", matchingPages.get(0));
+    pageModel.setMatchingPages(matchingPages);
     return pageModel;
   }
 
