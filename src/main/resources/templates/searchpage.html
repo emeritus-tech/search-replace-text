@@ -26,10 +26,11 @@
 						<div class="panel panel-default" th:each="matchingPage : ${model.matchingPages}">
 							<div class="panel-heading" role="tab" id="headingOne">
 								<h4 class="panel-title">
-									<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
-										aria-expanded="true" aria-controls="collapseOne" th:text="'Course Id: ' + ${matchingPage.courseId} + ' (' + ${matchingPage.courseName} + ')'">
-										Section 1
-									</a>
+								    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+								       aria-expanded="true" aria-controls="collapseOne">
+								        <span th:text="'Course Id: ' + ${matchingPage.courseId}"></span><br>
+								        <span th:text="'Course Name: ' + ${matchingPage.courseName}"></span>
+								    </a>
 								</h4>
 							</div>
 							<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel"
@@ -45,7 +46,7 @@
 										</thead>
 											<tbody th:each="pageInfo : ${matchingPage.pageInfoList}">
 											    <tr>
-											        <td><a th:href="${pageInfo.redirectUrl}" target="_blank" th:text="${pageInfo.pageTitle}"></a></td>
+											        <td><a th:href="${pageInfo.redirectUrl} + '?searchTerm=' + ${matchingPage.sourceText}" target="_blank" th:text="${pageInfo.pageTitle}"></a></td>
 											        <td th:text="${matchingPage.sourceText}"></td>
 											        <td th:text="${pageInfo.occurences}"></td>
 											    </tr>
