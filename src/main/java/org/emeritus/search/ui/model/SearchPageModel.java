@@ -19,9 +19,10 @@ public class SearchPageModel {
   /** The base url. */
   private String baseUrl;
 
+  /** The matching pages. */
+  private List<CoursePageInfo> matchingPages;
+
   /** The brand colors. */
   private Map<String, Object> brandColors;
-
-  private List<CoursePageInfo> matchingPages;
 
 }
