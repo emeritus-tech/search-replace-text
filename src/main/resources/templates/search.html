@@ -9,6 +9,128 @@
 <title th:text="#{title}">Content studio</title>
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <div th:if="${model.brandColors != null}" th:replace="brandcss::cssoverride(${model.brandColors})"></div>
+
+	<head>
+		<title>Bootstrap Accordion : Demo 80</title>
+		<!-- Include Bootstrap CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+		<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+		<style>
+			/* Form Styles */
+			form {
+				background-color: #f8f8f8;
+				padding: 20px;
+				border-radius: 5px;
+				box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+				margin-bottom: 20px;
+			}
+
+			.form-group label {
+				font-weight: bold;
+				color: #333;
+			}
+
+			.form-group input {
+				border-radius: 4px;
+				border: 1px solid #ccc;
+				padding: 10px;
+				font-size: 14px;
+			}
+
+			.btn-primary {
+				background-color: #119316;
+				border-color: #119316;
+			}
+
+			.btn-primary:hover {
+				background-color: #0e7b12;
+				border-color: #0e7b12;
+			}
+
+			/* Accordion Styles */
+			a:hover,
+			a:focus {
+				text-decoration: none;
+				outline: none;
+			}
+
+			#accordion .panel {
+				border: none;
+				box-shadow: none;
+				border-radius: 0;
+				margin-bottom: 6px;
+			}
+
+			#accordion .panel-heading {
+				padding: 0;
+			}
+
+			#accordion .panel-title a {
+				display: block;
+				padding: 25px 40px;
+				background: #fff;
+				font-size: 15px;
+				font-weight: bold;
+				color: #119316;
+				text-transform: uppercase;
+				border: 1px solid #eaeaea;
+				border-left: 3px solid #119316;
+				position: relative;
+				transition: all 0.3s ease 0s;
+			}
+
+			#accordion .panel-title a.collapsed {
+				color: #333;
+			}
+
+			#accordion .panel-title a:before,
+			#accordion .panel-title a.collapsed:before {
+				content: "\f107";
+				font-family: "Font Awesome 5 Free";
+				font-weight: 900;
+				font-size: 14px;
+				color: #333;
+				line-height: 24px;
+				position: absolute;
+				top: 23px;
+				right: 25px;
+			}
+
+			#accordion .panel-title a.collapsed:before {
+				content: "\f106";
+			}
+
+			#accordion .panel-title a:hover,
+			#accordion .panel-title a.collapsed:hover,
+			#accordion .panel-title a:before,
+			#accordion .panel-title a:hover:before {
+				color: #119316;
+			}
+
+			#accordion .panel-body {
+				padding: 15px 27px;
+				font-size: 14px;
+				color: #808080;
+				line-height: 23px;
+				border: 1px solid #eaeaea;
+				border-top: none;
+				border-left: 3px solid #eaeaea;
+			}
+
+			#accordion .panel-body p {
+				margin-bottom: 0;
+			}
+			
+        .highlight {
+            background-color: yellow;
+            font-weight: bold;
+        }
+		</style>
+
+
 </head>
 
 <body>
@@ -23,7 +145,7 @@
 	var appContext = /*[[@{/}]]*/ '';
 	var baseUrl =/*[[${baseUrl}]]*/'';
 </script>
+<script type="text/javascript" th:src="@{/js/searchtext.js}"></script>
 <script type="text/javascript" th:src="@{/js/sessionmaintainer.js}"></script>
 <script type="text/javascript" th:src="@{/js/frameresize.js}"></script>
-<script type="text/javascript" th:src="@{/js/searchtext.js}"></script>
 </html>
