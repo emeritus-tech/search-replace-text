@@ -1,5 +1,4 @@
 <div th:fragment="searchpage(model)">
-
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
@@ -21,9 +20,15 @@
                         document.getElementById('targetText').value,
                         document.getElementById('updatedText').value
                     )">Submit</button>
+
+					<!-- Horizontal Loader (Initially Hidden) -->
+					<div id="horizontal-loader" style="display: none; margin-top: 20px;">
+						<div class="horizontal-bar-loader"></div>
+					</div>
 				</form>
 			</div>
 		</div>
+
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"
@@ -64,5 +69,4 @@
 			</div>
 		</div>
 	</div>
-
 </div>
