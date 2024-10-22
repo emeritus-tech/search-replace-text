@@ -500,7 +500,8 @@ public class SearchTextServiceImpl implements ISearchTextService {
     return pages.stream().filter(page -> page.getPublished() && page.getBody().contains(textToFind))
         .map(page -> {
           Integer occurrences = countOccurrences(page.getBody(), textToFind);
-          return PageInfo.builder().pageTitle(page.getTitle()).occurences(occurrences).build();
+          return PageInfo.builder().pageTitle(page.getTitle()).redirectUrl(page.getHtmlUrl())
+              .occurences(occurrences).build();
         }).toList();
   }
 

@@ -11,4 +11,6 @@ public class PageInfo {
 
   private Integer occurences;
 
+  private String redirectUrl;
+
 }

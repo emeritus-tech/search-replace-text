@@ -95,11 +95,11 @@ public class SearchPageController {
     pageModel.setBaseUrl(baseUrl);
     pageModel.setBrandColors(canvasService.getBrandColors());
     SearchReplaceDto searchReplaceDto = SearchReplaceDto.builder().courseIds(Arrays.asList("1800"))
-        .sourceText("Establishing security-1").textToBeReplace("Establishing security").build();
+        .sourceText("less than 50%").textToBeReplace("less than 50%").build();
     Boolean isFound = searchTextService.searchTextAndReplaceAcrossCourses(searchReplaceDto);
     logger.info("isFound : {} ", isFound);
     List<CoursePageInfo> matchingPages = searchTextService.getMatchingPages(searchReplaceDto);
-    logger.info("matchesPages : {} ", matchingPages.get(0));
+    logger.info("matchesPages : {} ", matchingPages);
     pageModel.setMatchingPages(matchingPages);
     return pageModel;
   }
