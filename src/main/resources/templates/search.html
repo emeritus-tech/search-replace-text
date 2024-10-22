@@ -135,7 +135,7 @@
 
 <body>
 	<div>
-		<th:block th:if="${model.matchingPages != null && not #lists.isEmpty(model.matchingPages)}">
+		<th:block>
 			<div th:include="searchpage::searchpage(${model})"></div>
 		</th:block>
 	</div>

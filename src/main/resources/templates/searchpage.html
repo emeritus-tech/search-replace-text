@@ -16,7 +16,11 @@
 						<label for="updatedText">Replace With</label>
 						<input type="text" class="form-control" id="updatedText" placeholder="Insert text">
 					</div>
-					<button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-primary" onclick="findAndReplace(
+                        document.getElementById('course_id').value,
+                        document.getElementById('targetText').value,
+                        document.getElementById('updatedText').value
+                    )">Submit</button>
 				</form>
 			</div>
 		</div>
@@ -60,7 +64,5 @@
 			</div>
 		</div>
 	</div>
-
-
 
 </div>

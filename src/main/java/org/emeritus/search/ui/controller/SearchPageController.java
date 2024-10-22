@@ -1,7 +1,6 @@
 package org.emeritus.search.ui.controller;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -57,6 +56,7 @@ public class SearchPageController {
     SearchPageModel pageModel = buildSearchPageModel(courseId);
     model.addAttribute("model", pageModel);
     model.addAttribute("baseUrl", baseUrl);
+    logger.info("pageModel : {} ", pageModel);
     return "search.html";
   }
 
@@ -94,15 +94,29 @@ public class SearchPageController {
     pageModel.setLoggedInUserId(canvasUserId);
     pageModel.setBaseUrl(baseUrl);
     pageModel.setBrandColors(canvasService.getBrandColors());
-    SearchReplaceDto searchReplaceDto = SearchReplaceDto.builder().courseIds(Arrays.asList("1800"))
-        .sourceText("less than 50%").textToBeReplace("less than 50%").build();
-    Boolean isFound = searchTextService.searchTextAndReplaceAcrossCourses(searchReplaceDto);
-    logger.info("isFound : {} ", isFound);
-    List<CoursePageInfo> matchingPages = searchTextService.getMatchingPages(searchReplaceDto);
-    logger.info("matchesPages : {} ", matchingPages);
-    pageModel.setMatchingPages(matchingPages);
     return pageModel;
   }
+
+  @Operation(summary = "Get search text result", description = "Get search text result")
+  @GetMapping("/ui/v1/search-result")
+  public String getSearchtextResult(Model model,
+      @RequestParam(value = "courseIds", required = true) List<String> courseIds,
+      @RequestParam(value = "textToFind", required = true) String textToFind,
+      @RequestParam(value = "textToReplace", required = true) String textToReplace)
+      throws IOException {
+    SearchPageModel pageModel = SearchPageModel.builder().build();
+    logger.info("courseIds : {} ", courseIds);
+    SearchReplaceDto searchReplaceDto = SearchReplaceDto.builder().courseIds(courseIds)
+        .sourceText(textToFind).textToBeReplace(textToReplace).build();
+    List<CoursePageInfo> matchingPages = searchTextService.getMatchingPages(searchReplaceDto);
+    logger.info("search-result matchesPages : {} ", matchingPages);
+    pageModel.setMatchingPages(matchingPages);
+    pageModel.setBrandColors(canvasService.getBrandColors());
+    model.addAttribute("model", pageModel);
+    model.addAttribute("baseUrl", baseUrl);
+    return "search.html";
+  }
+
 
   /**
    * UI exception.
