@@ -1,64 +1,67 @@
 <div th:fragment="searchpage(model)">
 
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12">
-					<form>
-						<div class="form-group">
-							<label for="course_id">Course Ids</label>
-							<input type="text" class="form-control" id="course_id" placeholder="Enter Course Id">
-						</div>
-						<div class="form-group">
-							<label for="targetText">Text to Replace</label>
-							<input type="text" class="form-control" id="targetText" placeholder="Target Text">
-						</div>
-						<div class="form-group">
-							<label for="updatedText">Text to Insert</label>
-							<input type="text" class="form-control" id="updatedText" placeholder="Updated Text">
-						</div>
-						<button type="submit" class="btn btn-primary">Submit</button>
-					</form>
-				</div>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<form>
+					<div class="form-group">
+						<label for="course_id">Course Ids</label>
+						<input type="text" class="form-control" id="course_id" placeholder="Enter Course Id">
+					</div>
+					<div class="form-group">
+						<label for="targetText">Text to Replace</label>
+						<input type="text" class="form-control" id="targetText" placeholder="Target Text">
+					</div>
+					<div class="form-group">
+						<label for="updatedText">Text to Insert</label>
+						<input type="text" class="form-control" id="updatedText" placeholder="Updated Text">
+					</div>
+					<button type="submit" class="btn btn-primary">Submit</button>
+				</form>
 			</div>
-			<div class="row">
-				<div class="col-md-12">
-					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"  th:if="${!#lists.isEmpty(model.matchingPages)}" th:each="matchingPage : ${model.matchingPages}">
-						<div class="panel panel-default">
-							<div class="panel-heading" role="tab" id="headingOne">
-								<h4 class="panel-title">
-								    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
-								       aria-expanded="true" aria-controls="collapseOne">
-								        <span th:text="'Course Id: ' + ${matchingPage.courseId}"></span><br>
-								        <span th:text="'Course Name: ' + ${matchingPage.courseName}"></span>
-								    </a>
-								</h4>
-							</div>
-							<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel"
-								aria-labelledby="headingOne">
-								<div class="panel-body">
-									<table class="table table-bordered">
-										<thead>
-											<tr>
-												<th>Page Name</th>
-												<th>Old Text</th>
-												<th>occurrence</th>
-											</tr>
-										</thead>
-											<tbody th:each="pageInfo : ${matchingPage.pageInfoList}">
-											    <tr>
-											        <td><a th:href="${pageInfo.redirectUrl}" target="_blank" th:text="${pageInfo.pageTitle}"></a></td>
-											        <td th:text="${matchingPage.sourceText}"></td>
-											        <td th:text="${pageInfo.occurences}"></td>
-											    </tr>
-											</tbody>
-									</table>
-								</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"
+					th:if="${!#lists.isEmpty(model.matchingPages)}"
+					th:each="matchingPage, iterStat : ${model.matchingPages}">
+					<div class="panel panel-default">
+						<div class="panel-heading" role="tab" th:attr="id='heading' + ${iterStat.index}">
+							<h4 class="panel-title">
+								<a role="button" data-toggle="collapse" th:attr="href='#collapse' + ${iterStat.index}"
+									aria-expanded="true" aria-controls="'collapse' + ${iterStat.index}">
+									<span th:text="'Course Id: ' + ${matchingPage.courseId}"></span><br>
+									<span th:text="'Course Name: ' + ${matchingPage.courseName}"></span>
+								</a>
+							</h4>
+						</div>
+						<div th:attr="id='collapse' + ${iterStat.index}" class="panel-collapse collapse in"
+							role="tabpanel" aria-labelledby="'heading' + ${iterStat.index}">
+							<div class="panel-body">
+								<table class="table table-bordered">
+									<thead>
+										<tr>
+											<th>Page Name</th>
+											<th>Old Text</th>
+											<th>occurrence</th>
+										</tr>
+									</thead>
+									<tbody th:each="pageInfo : ${matchingPage.pageInfoList}">
+										<tr>
+											<td><a th:href="${pageInfo.redirectUrl}" target="_blank"
+													th:text="${pageInfo.pageTitle}"></a></td>
+											<td th:text="${matchingPage.sourceText}"></td>
+											<td th:text="${pageInfo.occurences}"></td>
+										</tr>
+									</tbody>
+								</table>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
 
 
 
