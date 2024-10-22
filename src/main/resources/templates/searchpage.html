@@ -128,12 +128,12 @@
 							<input type="text" class="form-control" id="course_id" placeholder="Enter Course Id">
 						</div>
 						<div class="form-group">
-							<label for="sourceText">Source Text</label>
-							<input type="text" class="form-control" id="sourceText" placeholder="Source Text">
+							<label for="targetText">Text to Replace</label>
+							<input type="text" class="form-control" id="targetText" placeholder="Target Text">
 						</div>
 						<div class="form-group">
-							<label for="replaceText">Replace Text</label>
-							<input type="text" class="form-control" id="replaceText" placeholder="Replace Text">
+							<label for="updatedText">Text to Insert</label>
+							<input type="text" class="form-control" id="updatedText" placeholder="Updated Text">
 						</div>
 						<button type="submit" class="btn btn-primary">Submit</button>
 					</form>
@@ -158,8 +158,8 @@
 										<thead>
 											<tr>
 												<th>Page Name</th>
-												<th>Source Text</th>
-												<th>Ocuurences</th>
+												<th>Old Text</th>
+												<th>occurrence</th>
 											</tr>
 										</thead>
 											<tbody th:each="pageInfo : ${matchingPage.pageInfoList}">
