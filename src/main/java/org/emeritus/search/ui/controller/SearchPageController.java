@@ -114,7 +114,7 @@ public class SearchPageController {
     pageModel.setBrandColors(canvasService.getBrandColors());
     model.addAttribute("model", pageModel);
     model.addAttribute("baseUrl", baseUrl);
-    return "search.html";
+    return "searchresult.html";
   }
 
 
