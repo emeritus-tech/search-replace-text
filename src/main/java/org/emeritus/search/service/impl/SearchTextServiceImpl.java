@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.emeritus.canvas.interfaces.AssignmentReader;
 import org.emeritus.canvas.interfaces.AssignmentWriter;
@@ -78,7 +80,7 @@ public class SearchTextServiceImpl implements ISearchTextService {
   @Override
   public Boolean searchTextAndReplaceAcrossCourses(SearchReplaceDto searchReplaceDto)
       throws IOException {
-
+    System.out.println("searchReplaceDto" + searchReplaceDto.getSourceText());
     for (String courseId : searchReplaceDto.getCourseIds()) {
       List<Module> modules = getModules(courseId);
       extractModuleItem(modules, courseId, searchReplaceDto);
@@ -173,36 +175,50 @@ public class SearchTextServiceImpl implements ISearchTextService {
   private void handleModuleItemToFindAndReplace(SearchReplaceDto searchReplaceDto,
       ModuleItem moduleItem, String courseId, Module module, List<Page> pages,
       List<DiscussionTopic> discussionTopics, List<Assignment> assignments) throws IOException {
-    String body = null;
     switch (moduleItem.getType()) {
       case PAGE:
         Page page = getMatchingPage(pages, moduleItem.getPageUrl());
         if (page != null && !StringUtils.isEmpty(page.getBody())
             && (page.getBody().contains(searchReplaceDto.getSourceText()))) {
+
           // Replace the text
-          body = page.getBody().replace(searchReplaceDto.getSourceText(),
-              searchReplaceDto.getTextToBeReplace());
+          String originalMessage = page.getBody();
+          String updatedMessage =
+              originalMessage.replaceAll("\\b" + searchReplaceDto.getSourceText() + "\\b",
+                  searchReplaceDto.getTextToBeReplace());
 
-          // Set the updated body back to the page
-          page.setBody(body);
+          // Check if replacement occurred
+          if (!originalMessage.equals(updatedMessage)) {
+            // Set the updated message back to the page
+            page.setBody(updatedMessage);
 
-          updateCoursePage(page, courseId);
+            // Update the page
+            updateCoursePage(page, courseId);
+          }
         }
         break;
 
       case DISCUSSION:
         DiscussionTopic discussionTopic =
             getMatchingTopic(discussionTopics, moduleItem.getContentId());
+
         if (discussionTopic != null && !StringUtils.isEmpty(discussionTopic.getMessage())
-            && (discussionTopic.getMessage().contains(searchReplaceDto.getSourceText()))) {
+            && discussionTopic.getMessage().contains(searchReplaceDto.getSourceText())) {
+
           // Replace the text
-          body = discussionTopic.getMessage().replace(searchReplaceDto.getSourceText(),
-              searchReplaceDto.getTextToBeReplace());
+          String originalMessage = discussionTopic.getMessage();
+          String updatedMessage =
+              originalMessage.replaceAll("\\b" + searchReplaceDto.getSourceText() + "\\b",
+                  searchReplaceDto.getTextToBeReplace());
 
-          // Set the updated body back to the page
-          discussionTopic.setMessage(body);
+          // Check if replacement occurred
+          if (!originalMessage.equals(updatedMessage)) {
+            // Set the updated message back to the discussion topic
+            discussionTopic.setMessage(updatedMessage);
 
-          updateDiscussionTopic(courseId, discussionTopic);
+            // Update the discussion topic
+            updateDiscussionTopic(courseId, discussionTopic);
+          }
         }
         break;
 
@@ -210,14 +226,21 @@ public class SearchTextServiceImpl implements ISearchTextService {
         Assignment assignment = getMatchingAssignments(assignments, moduleItem.getContentId());
         if (assignment != null && !StringUtils.isEmpty(assignment.getDescription())
             && (assignment.getDescription().contains(searchReplaceDto.getSourceText()))) {
+
           // Replace the text
-          body = assignment.getDescription().replace(searchReplaceDto.getSourceText(),
-              searchReplaceDto.getTextToBeReplace());
+          String originalMessage = assignment.getDescription();
+          String updatedMessage =
+              originalMessage.replaceAll("\\b" + searchReplaceDto.getSourceText() + "\\b",
+                  searchReplaceDto.getTextToBeReplace());
 
-          // Set the updated body back to the page
-          assignment.setDescription(body);
+          // Check if replacement occurred
+          if (!originalMessage.equals(updatedMessage)) {
+            // Set the updated message back to the assignment
+            assignment.setDescription(updatedMessage);
 
-          updateAssignments(courseId, assignment.getId(), assignment);
+            // Update the assignment
+            updateAssignments(courseId, assignment.getId(), assignment);
+          }
         }
         break;
 
@@ -490,18 +513,22 @@ public class SearchTextServiceImpl implements ISearchTextService {
    * @return the list
    */
   // Method to return a list of PageInfo with occurrence count for each page
-  public List<PageInfo> findPagesWithText(List<Page> pages, String textToFind) {
+  public List<PageInfo> findPagesWithText(List<Page> pages, String textToBeReplaced) {
 
     // Validate input to avoid processing on null or empty text
-    if (textToFind == null || textToFind.isEmpty()) {
+    if (textToBeReplaced == null || textToBeReplaced.isEmpty()) {
       return Collections.emptyList();
     }
 
+    // Escape special characters in textToFind for safe usage in regex
+    String regex = "\\b" + Pattern.quote(textToBeReplaced) + "\\b";
+
     // Use Stream API to filter pages that contain the search text in the body
-    return pages.stream().filter(page -> page.getPublished() && page.getBody().contains(textToFind))
+    return pages.stream()
+        .filter(page -> page.getPublished() && containsExactText(page.getBody(), regex))
         .map(page -> {
           // Count occurrences of the search text
-          Integer occurrences = countOccurrences(page.getBody(), textToFind);
+          Integer occurrences = countOccurrences(page.getBody(), regex);
           return PageInfo.builder().pageTitle(page.getTitle()).redirectUrl(page.getHtmlUrl())
               .occurences(occurrences).build();
         }).toList();
@@ -516,19 +543,22 @@ public class SearchTextServiceImpl implements ISearchTextService {
    */
   // Method to find assignments containing the specific text
   public List<PageInfo> findAssignmentsWithText(String courseId, List<Assignment> assignments,
-      String textToFind) {
+      String textToBeReplaced) {
 
     // Validate input to avoid processing on null or empty text
-    if (textToFind == null || textToFind.isEmpty()) {
+    if (textToBeReplaced == null || textToBeReplaced.isEmpty()) {
       return Collections.emptyList();
     }
 
+
+    // Escape special characters in textToFind for safe usage in regex
+    String regex = "\\b" + Pattern.quote(textToBeReplaced) + "\\b";
+
     // Use Stream API to filter assignments that contain the search text in the body
-    return assignments.stream().filter(
-        assignment -> assignment.isPublished() && assignment.getDescription().contains(textToFind))
-        .map(assignment -> {
+    return assignments.stream().filter(assignment -> assignment.isPublished()
+        && containsExactText(assignment.getDescription(), regex)).map(assignment -> {
           // Count occurrences of the search text
-          Integer occurrences = countOccurrences(assignment.getDescription(), textToFind);
+          Integer occurrences = countOccurrences(assignment.getDescription(), regex);
           String redirectUrl =
               String.format("%s/courses/%s/assignments/%s", baseUrl, courseId, assignment.getId());
           return PageInfo.builder().pageTitle(assignment.getName()).redirectUrl(redirectUrl)
@@ -542,23 +572,26 @@ public class SearchTextServiceImpl implements ISearchTextService {
    * @param courseId
    *
    * @param discussionTopics the discussion topics
-   * @param textToFind the text to find
+   * @param textToBeReplaced the text to replace
    * @return the list
    */
   // Method to find discussionTopics containing the specific text
   public List<PageInfo> findDiscussionTopicsWithText(String courseId,
-      List<DiscussionTopic> discussionTopics, String textToFind) {
+      List<DiscussionTopic> discussionTopics, String textToBeReplaced) {
 
     // Validate input to avoid processing on null or empty text
-    if (textToFind == null || textToFind.isEmpty()) {
+    if (textToBeReplaced == null || textToBeReplaced.isEmpty()) {
       return Collections.emptyList();
     }
 
-    // Use Stream API to filter discussionTopics that contain the search text in the body
+    // Escape special characters in textToFind for safe usage in regex
+    String regex = "\\b" + Pattern.quote(textToBeReplaced) + "\\b";
+
+    // Use Stream API to filter discussionTopics that contain the exact search text in the body
     return discussionTopics.stream().filter(discussionTopic -> discussionTopic.isPublished()
-        && discussionTopic.getMessage().contains(textToFind)).map(discussionTopic -> {
-          // Count occurrences of the search text
-          Integer occurrences = countOccurrences(discussionTopic.getMessage(), textToFind);
+        && containsExactText(discussionTopic.getMessage(), regex)).map(discussionTopic -> {
+          // Count occurrences of the exact search text
+          Integer occurrences = countOccurrences(discussionTopic.getMessage(), regex);
           String redirectUrl = String.format("%s/courses/%s/discussion_topics/%s", baseUrl,
               courseId, discussionTopic.getId());
           // Map to PageInfo with the title and occurrences
@@ -567,22 +600,23 @@ public class SearchTextServiceImpl implements ISearchTextService {
         }).toList();
   }
 
-  /**
-   * Count occurrences.
-   *
-   * @param body the body
-   * @param textToFind the text to find
-   * @return the int
-   */
-  // Utility method to count occurrences of textToFind in the page body
-  public static int countOccurrences(String body, String textToFind) {
+  // Helper method to check for exact word match using regex
+  private boolean containsExactText(String message, String regex) {
+    Pattern pattern = Pattern.compile(regex);
+    Matcher matcher = pattern.matcher(message);
+    return matcher.find(); // Returns true if the exact text is found
+  }
+
+  // Count occurrences of exact match in the text
+  private Integer countOccurrences(String message, String regex) {
+    Pattern pattern = Pattern.compile(regex);
+    Matcher matcher = pattern.matcher(message);
     int count = 0;
-    int index = 0;
-    while ((index = body.indexOf(textToFind, index)) != -1) {
+    while (matcher.find()) {
       count++;
-      index += textToFind.length();
     }
     return count;
   }
+
 
 }
