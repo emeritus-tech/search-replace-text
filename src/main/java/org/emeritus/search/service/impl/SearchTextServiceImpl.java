@@ -6,9 +6,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.emeritus.canvas.interfaces.AssignmentReader;
 import org.emeritus.canvas.interfaces.AssignmentWriter;
@@ -31,6 +33,7 @@ import org.emeritus.canvas.requestOptions.ListCourseAssignmentsOptions;
 import org.emeritus.canvas.requestOptions.ListCoursePagesOptions;
 import org.emeritus.canvas.requestOptions.ListModulesOptions;
 import org.emeritus.search.dto.CoursePageInfo;
+import org.emeritus.search.dto.ItemReplaceDto;
 import org.emeritus.search.dto.PageInfo;
 import org.emeritus.search.dto.SearchReplaceDto;
 import org.emeritus.search.service.ISearchTextService;
@@ -529,8 +532,8 @@ public class SearchTextServiceImpl implements ISearchTextService {
         .map(page -> {
           // Count occurrences of the search text
           Integer occurrences = countOccurrences(page.getBody(), regex);
-          return PageInfo.builder().pageTitle(page.getTitle()).redirectUrl(page.getHtmlUrl())
-              .occurences(occurrences).build();
+          return PageInfo.builder().pageTitle(page.getTitle()).type(PAGE).id(page.getPageId())
+              .redirectUrl(page.getHtmlUrl()).occurences(occurrences).build();
         }).toList();
   }
 
@@ -561,8 +564,9 @@ public class SearchTextServiceImpl implements ISearchTextService {
           Integer occurrences = countOccurrences(assignment.getDescription(), regex);
           String redirectUrl =
               String.format("%s/courses/%s/assignments/%s", baseUrl, courseId, assignment.getId());
-          return PageInfo.builder().pageTitle(assignment.getName()).redirectUrl(redirectUrl)
-              .occurences(occurrences).build();
+          return PageInfo.builder().pageTitle(assignment.getName()).type(ASSIGNMENT)
+              .id(assignment.getId().longValue()).redirectUrl(redirectUrl).occurences(occurrences)
+              .build();
         }).toList();
   }
 
@@ -595,8 +599,8 @@ public class SearchTextServiceImpl implements ISearchTextService {
           String redirectUrl = String.format("%s/courses/%s/discussion_topics/%s", baseUrl,
               courseId, discussionTopic.getId());
           // Map to PageInfo with the title and occurrences
-          return PageInfo.builder().pageTitle(discussionTopic.getTitle()).redirectUrl(redirectUrl)
-              .occurences(occurrences).build();
+          return PageInfo.builder().pageTitle(discussionTopic.getTitle()).type(DISCUSSION)
+              .id(discussionTopic.getId()).redirectUrl(redirectUrl).occurences(occurrences).build();
         }).toList();
   }
 
@@ -618,5 +622,196 @@ public class SearchTextServiceImpl implements ISearchTextService {
     return count;
   }
 
+  @Override
+  public List<CoursePageInfo> findTextAcrossCourses(SearchReplaceDto searchReplaceDto)
+      throws IOException {
+    // Initialize the list to store matching pages
+    List<CoursePageInfo> coursePageInfoList = new ArrayList<>();
+
+    // Extract the course IDs and the text to be replaced
+    List<String> courseIds = searchReplaceDto.getCourseIds();
+    String textToFind = searchReplaceDto.getSourceText();
+
+    // Iterate through each course ID and find matching text
+    for (String courseId : courseIds) {
+      findText(courseId, textToFind, textToFind, coursePageInfoList);
+    }
+
+    // Return the list of matching pages
+    return coursePageInfoList;
+  }
+
+  @Override
+  public Boolean replaceSelectedItemsForCourse(ItemReplaceDto itemReplaceDto) throws IOException {
+
+    // Group by type and get the IDs for each type
+    Map<String, List<Long>> idsByType = itemReplaceDto.getItemIdsMap().entrySet().stream()
+        .collect(Collectors.groupingBy(Map.Entry::getValue, // Group by type
+            Collectors.mapping(Map.Entry::getKey, Collectors.toList()) // Collect IDs for each type
+        ));
+
+
+    // Iterate through each course ID and find matching text
+    for (String courseId : itemReplaceDto.getCourseIds()) {
+      List<Page> pages = listPagesInCourse(courseId);
+      List<DiscussionTopic> discussionTopics = getCourseAllDiscussionTopics(courseId);
+      List<Assignment> assignments = listCourseAssignments(courseId);
+
+      // Iterate over the map and add type checks
+      for (Map.Entry<String, List<Long>> entry : idsByType.entrySet()) {
+        String type = entry.getKey();
+        List<Long> ids = entry.getValue();
+
+        // Check for specific types and perform actions
+        if (type.equals(PAGE)) {
+          logger.info("Processing page with IDs: {}", ids);
+          filterPagesMatchesWithIdsAndUpdate(pages, ids, courseId, itemReplaceDto);
+        } else if (type.equals(ASSIGNMENT)) {
+          logger.info("Processing assignment with IDs: {}", ids);
+          filterAssignmentsMatchesWithIdsAndUpdate(assignments, ids, courseId, itemReplaceDto);
+        } else if (type.equals(DISCUSSION)) {
+          filterDiscussionsMatchesWithIdsAndUpdate(discussionTopics, ids, courseId, itemReplaceDto);
+          logger.info("Processing discussion with IDs: {}", ids);
+        }
+      }
+    }
+    return true;
+  }
+
+
+  // Method to filter matching pages and call the updateCoursePage method
+  public List<Page> filterPagesMatchesWithIdsAndUpdate(List<Page> pages, List<Long> ids,
+      String courseId, ItemReplaceDto itemReplaceDto) {
+    // Filter the pages based on matching IDs
+    List<Page> matchingPages =
+        pages.stream().filter(page -> ids.contains(page.getPageId())).toList();
+
+    Optional<Page> updatedPage = java.util.Optional.empty();
+
+    // Loop through the matching pages and update each one
+    for (Page page : matchingPages) {
+      try {
+        if (page != null && !StringUtils.isEmpty(page.getBody())
+            && (page.getBody().contains(itemReplaceDto.getSourceText()))) {
+
+          // Replace the text
+          String originalMessage = page.getBody();
+          String updatedMessage = originalMessage.replaceAll(
+              "\\b" + itemReplaceDto.getSourceText() + "\\b", itemReplaceDto.getTextToBeReplace());
+
+          // Check if replacement occurred
+          if (!originalMessage.equals(updatedMessage)) {
+            // Set the updated message back to the page
+            page.setBody(updatedMessage);
+
+            // Update the page
+            updatedPage = updateCoursePage(page, courseId);
+          }
+        }
+        if (updatedPage.isPresent()) {
+          logger.info("Successfully updated page: {}", updatedPage.get().getPageId());
+        } else {
+          logger.info("Failed to update page: {}", page.getPageId());
+        }
+      } catch (IOException e) {
+        logger.error("Error updating page: {} - {}", page.getPageId(), e.getMessage());
+      }
+    }
+
+    // Return the list of filtered pages
+    return matchingPages;
+  }
+
+
+  // Method to filter matching assignments and call the updateAssignment method
+  public List<Assignment> filterAssignmentsMatchesWithIdsAndUpdate(List<Assignment> assignments,
+      List<Long> ids, String courseId, ItemReplaceDto itemReplaceDto) {
+
+    Optional<Assignment> updatedAssignment = java.util.Optional.empty();
+
+    // Filter the assignments based on matching IDs
+    List<Assignment> matchingAssignments = assignments.stream()
+        .filter(assignment -> ids.contains(assignment.getId().longValue())).toList();
+
+    // Loop through the matching assignments and update each one
+    for (Assignment assignment : matchingAssignments) {
+      try {
+        if (assignment != null && !StringUtils.isEmpty(assignment.getDescription())
+            && (assignment.getDescription().contains(itemReplaceDto.getSourceText()))) {
+
+          // Replace the text
+          String originalMessage = assignment.getDescription();
+          String updatedMessage = originalMessage.replaceAll(
+              "\\b" + itemReplaceDto.getSourceText() + "\\b", itemReplaceDto.getTextToBeReplace());
+
+          // Check if replacement occurred
+          if (!originalMessage.equals(updatedMessage)) {
+            // Set the updated message back to the assignment
+            assignment.setDescription(updatedMessage);
+
+            // Update the assignment
+            updatedAssignment = updateAssignments(courseId, assignment.getId(), assignment);
+          }
+        }
+        if (updatedAssignment.isPresent()) {
+          logger.info("Successfully updated assignment: {}", updatedAssignment.get().getId());
+        } else {
+          logger.info("Failed to update assignment: {}", updatedAssignment.get().getId());
+        }
+      } catch (IOException e) {
+        logger.error("Error updating assignment: {} - {}", updatedAssignment.get().getId(),
+            e.getMessage());
+      }
+    }
+
+    // Return the list of filtered assignments
+    return matchingAssignments;
+  }
+
+  // Method to filter matching pages and call the updateCoursePage method
+  public List<DiscussionTopic> filterDiscussionsMatchesWithIdsAndUpdate(
+      List<DiscussionTopic> discussionTopics, List<Long> ids, String courseId,
+      ItemReplaceDto itemReplaceDto) {
+
+    Optional<DiscussionTopic> updatedDiscussions = java.util.Optional.empty();
+
+    // Filter the DiscussionTopics based on matching IDs
+    List<DiscussionTopic> matchingDiscussionsTopic = discussionTopics.stream()
+        .filter(discussionTopic -> ids.contains(discussionTopic.getId())).toList();
+
+    // Loop through the matching discussions topic and update each one
+    for (DiscussionTopic discussionTopic : matchingDiscussionsTopic) {
+      try {
+        if (discussionTopic != null && !StringUtils.isEmpty(discussionTopic.getMessage())
+            && (discussionTopic.getMessage().contains(itemReplaceDto.getSourceText()))) {
+
+          // Replace the text
+          String originalMessage = discussionTopic.getMessage();
+          String updatedMessage = originalMessage.replaceAll(
+              "\\b" + itemReplaceDto.getSourceText() + "\\b", itemReplaceDto.getTextToBeReplace());
+
+          // Check if replacement occurred
+          if (!originalMessage.equals(updatedMessage)) {
+            // Set the updated message back to the page
+            discussionTopic.setMessage(updatedMessage);
+
+            // Update the discussions
+            updatedDiscussions = updateDiscussionTopic(courseId, discussionTopic);
+          }
+        }
+        if (updatedDiscussions.isPresent()) {
+          logger.info("Successfully updated discussions: {}", updatedDiscussions.get().getId());
+        } else {
+          logger.info("Failed to update discussions: {}", updatedDiscussions.get().getId());
+        }
+      } catch (IOException e) {
+        logger.error("Error updating discussions: {} - {}", updatedDiscussions.get().getId(),
+            e.getMessage());
+      }
+    }
+
+    // Return the list of filtered matching discussions
+    return matchingDiscussionsTopic;
+  }
 
 }

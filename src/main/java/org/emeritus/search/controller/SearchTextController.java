@@ -5,6 +5,7 @@ import java.util.List;
 import org.emeritus.search.constant.URLConstants;
 import org.emeritus.search.dto.CoursePageInfo;
 import org.emeritus.search.dto.GlobalApiResponse;
+import org.emeritus.search.dto.ItemReplaceDto;
 import org.emeritus.search.dto.SearchReplaceDto;
 import org.emeritus.search.service.ISearchTextService;
 import org.emeritus.search.utils.RestUtils;
@@ -40,7 +41,7 @@ public class SearchTextController {
 
   @Operation(summary = "Search text and replace acrross courses",
       description = "Search text and replace acrross courses and returns success or failure ")
-  @PostMapping(URLConstants.SEARCH_TEXT_AND_REPLACE)
+  @PostMapping(URLConstants.SEARCH_TEXT_AND_REPLACE_ALL)
   public ResponseEntity<GlobalApiResponse<Boolean>> searchTextAndReplaceAcrossCourses(
       @RequestBody SearchReplaceDto searchReplaceDto) throws IOException {
     return RestUtils.successResponse(
@@ -54,6 +55,24 @@ public class SearchTextController {
       @RequestBody SearchReplaceDto searchReplaceDto) throws IOException {
     return RestUtils.successResponse(searchTextService.getMatchingPages(searchReplaceDto),
         HttpStatus.OK);
+  }
+
+  @Operation(summary = "Find text acrross courses",
+      description = "Find text acrross courses and returns success or failure ")
+  @PostMapping(URLConstants.FIND)
+  public ResponseEntity<GlobalApiResponse<List<CoursePageInfo>>> findTextAcrossCourses(
+      @RequestBody SearchReplaceDto searchReplaceDto) throws IOException {
+    return RestUtils.successResponse(searchTextService.findTextAcrossCourses(searchReplaceDto),
+        HttpStatus.OK);
+  }
+
+  @Operation(summary = "Replace selected items for a course",
+      description = "Replace selected items for a course and returns success or failure ")
+  @PostMapping(URLConstants.REPLACE_SELECTED_ITEMS)
+  public ResponseEntity<GlobalApiResponse<Boolean>> replaceSelectedItemsForCourse(
+      @RequestBody ItemReplaceDto itemReplaceDto) throws IOException {
+    return RestUtils.successResponse(
+        searchTextService.replaceSelectedItemsForCourse(itemReplaceDto), HttpStatus.OK);
   }
 
 }

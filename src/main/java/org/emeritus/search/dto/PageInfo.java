@@ -7,7 +7,11 @@ import lombok.Data;
 @Builder
 public class PageInfo {
 
+  private Long id;
+
   private String pageTitle;
+
+  private String type;
 
   private Integer occurences;
 
