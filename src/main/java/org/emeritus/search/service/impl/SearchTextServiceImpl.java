@@ -68,6 +68,9 @@ public class SearchTextServiceImpl implements ISearchTextService {
   /** The Constant PAGE. */
   private static final String PAGE = "Page";
 
+  /** The Constant SUB_HEADER. */
+  private static final String SUB_HEADER = "SubHeader";
+
   /** The Constant DISCUSSION. */
   private static final String DISCUSSION = "Discussion";
 
@@ -202,6 +205,28 @@ public class SearchTextServiceImpl implements ISearchTextService {
         }
         break;
 
+      case SUB_HEADER:
+        Page pageSubHeader = getMatchingSubHeaderPage(pages, moduleItem.getTitle());
+        if (pageSubHeader != null && !StringUtils.isEmpty(pageSubHeader.getBody())
+            && (pageSubHeader.getBody().contains(searchReplaceDto.getSourceText()))) {
+
+          // Replace the text
+          String originalMessage = pageSubHeader.getBody();
+          String updatedMessage =
+              originalMessage.replaceAll("\\b" + searchReplaceDto.getSourceText() + "\\b",
+                  searchReplaceDto.getTextToBeReplace());
+
+          // Check if replacement occurred
+          if (!originalMessage.equals(updatedMessage)) {
+            // Set the updated message back to the page
+            pageSubHeader.setBody(updatedMessage);
+
+            // Update the page
+            updateCoursePage(pageSubHeader, courseId);
+          }
+        }
+        break;
+
       case DISCUSSION:
         DiscussionTopic discussionTopic =
             getMatchingTopic(discussionTopics, moduleItem.getContentId());
@@ -262,6 +287,11 @@ public class SearchTextServiceImpl implements ISearchTextService {
    */
   private Page getMatchingPage(List<Page> pages, String pageUrl) {
     return pages.stream().filter(page -> page.getUrl() != null && pageUrl.equals(page.getUrl()))
+        .findAny().orElse(null);
+  }
+
+  private Page getMatchingSubHeaderPage(List<Page> pages, String title) {
+    return pages.stream().filter(page -> page.getTitle() != null && title.equals(page.getTitle()))
         .findAny().orElse(null);
   }
 
