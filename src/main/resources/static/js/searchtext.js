@@ -30,7 +30,8 @@
 		var replaceTextModal = bootstrap.Modal.getInstance(document.getElementById('replaceTextModal'));
         replaceTextModal.hide();
 		// Show loader
-        document.getElementById('loader').style.display = 'block';
+       // document.getElementById('loader').style.display = 'block';
+       $("#loaderOverlay").addClass("active");
         $(".invalid-feedback").hide();
         // Show the horizontal loader before making the request
         //document.getElementById('horizontal-loader').style.display = 'block';
@@ -59,15 +60,14 @@
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 // Hide the loader when an error occurs
-                document.getElementById('horizontal-loader').style.display = 'none';
+               // document.getElementById('horizontal-loader').style.display = 'none';
+               $("#loaderOverlay").removeClass("active");
                 console.log("Error while replacing text: " + errorThrown);
             }
         });
     }
     
 function findResult(){
-		// Show loader
-        document.getElementById('loader').style.display = 'block';
         $(".invalid-feedback").hide();
         
          $("#searchResult").html("");
@@ -82,6 +82,9 @@ function findResult(){
 			$("#invalid-targetText").show();
 			return false;
 		}
+		
+		// Show loader
+        document.getElementById('loader').style.display = 'block';
 
         // Convert the comma-separated string into an array (trim to remove extra spaces)
         let courseIdList = courseIds.split(',').map(id => id.trim());
@@ -95,10 +98,11 @@ function findResult(){
                 // hide loader
        			 document.getElementById('loader').style.display = 'none';
        			 $("#resetButton").removeClass("d-none");
+       			 $("#loaderOverlay").removeClass("active");
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 // Hide the loader when an error occurs
-                document.getElementById('horizontal-loader').style.display = 'none';
+               document.getElementById('loader').style.display = 'none';
                 console.log("Error while replacing text: " + errorThrown);
             }
         });
@@ -128,7 +132,7 @@ function populateResult(courseIds, textToFind, replaceWith) {
 }
 
 function showReplaceContentModal() {
-	
+	$("#replaceWith").val("");
 	var confirmationModal = new bootstrap.Modal(document.getElementById('replaceTextModal'));
     confirmationModal.show();
 }
@@ -145,7 +149,8 @@ function replaceItems() {
 	var replaceTextModal = bootstrap.Modal.getInstance(document.getElementById('replaceTextModal'));
     replaceTextModal.hide();
 	// Show loader
-	document.getElementById('loader').style.display = 'block';
+	//document.getElementById('loader').style.display = 'block';
+	$("#loaderOverlay").addClass("active");
 	$(".invalid-feedback").hide();
 	// Show the horizontal loader before making the request
 	//document.getElementById('horizontal-loader').style.display = 'block';
@@ -174,7 +179,8 @@ function replaceItems() {
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			// Hide the loader when an error occurs
-			document.getElementById('horizontal-loader').style.display = 'none';
+			//document.getElementById('loader').style.display = 'none';
+			$("#loaderOverlay").removeClass("active");
 			console.log("Error while replacing text: " + errorThrown);
 		}
 	});
@@ -230,6 +236,7 @@ $(document).on('click', '.accordion-button', function(e) {
 // Reset form and hide loader on reset
 $(document).on('click', '#resetButton', function(e) {
 	document.getElementById('loader').style.display = 'none';
+	$("#replaceWith").val("");
 	document.getElementById('searchResult').innerHTML = '';
 	$("#resetButton").addClass("d-none");
 	$(".invalid-feedback").hide();

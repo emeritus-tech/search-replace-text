@@ -1,5 +1,14 @@
 <div th:fragment="searchresult(model)">
-	<div class="row">
+	<div th:if="${#lists.isEmpty(model.matchingPages)}">
+		<div id="noDataContainer" class="text-center mt-5">
+			<img src="images/no-data-found.svg" alt="No Data" style="width: 300px; height: auto;">
+			<h3>No Matching Items Found</h3>
+			<p>We couldn't find any items matching your search criteria. Please try again with different terms or ensure the
+				correct course IDs and content are selected for replacement.</p>
+		</div>
+
+	</div>
+	<div class="row" th:if="${!#lists.isEmpty(model.matchingPages)}">
 		<div class="col-md-4">
 			<div class="form-check">
 				<input class="form-check-input" type="checkbox" value="" id="selectAllCourses">
