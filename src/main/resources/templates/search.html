@@ -6,12 +6,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Feature-Policy" content="geolocation *; microphone *; camera *; midi *; encrypted-media *; autoplay *; clipboard-write *; display-capture *; web-share *">
-<title th:text="#{title}">Content studio</title>
+<title>Canvas course search & replace</title>
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <div th:if="${model.brandColors != null}" th:replace="brandcss::cssoverride(${model.brandColors})"></div>
-
-	<head>
-		<title>Bootstrap Accordion : Demo 80</title>
+		
 		<!-- Include Bootstrap CSS -->
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -228,6 +226,27 @@
 		 .accordion-button:not(.collapsed)::after {
 			 background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
 			 transform: rotate(-180deg);
+		 }
+		 
+		 .btn-outline-primary {
+			 color: #00824b !important;
+    		border-color: #00824b !important;
+		 }
+		 
+		 .btn-outline-primary:hover {
+			 color: #ffffff !important;
+    		border-color: #00824b !important;
+    		background-color:  #00824b !important;
+		 }
+		 
+		 .form-check-input:checked {
+			 border-color: #00824b !important;
+    		background-color:  #00824b !important;
+		 }
+		 
+		 .form-control:focus, .btn:focus-visible {
+			  border-color: #00824b !important;
+			  box-shadow: 0 0 0 .25rem #1376495c;
 		 }
 		
 		</style>
