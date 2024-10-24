@@ -762,11 +762,10 @@ public class SearchTextServiceImpl implements ISearchTextService {
         if (updatedAssignment.isPresent()) {
           logger.info("Successfully updated assignment: {}", updatedAssignment.get().getId());
         } else {
-          logger.info("Failed to update assignment: {}", updatedAssignment.get().getId());
+          logger.info("Failed to update assignment: {}", assignment.getId());
         }
       } catch (IOException e) {
-        logger.error("Error updating assignment: {} - {}", updatedAssignment.get().getId(),
-            e.getMessage());
+        logger.error("Error updating assignment: {} - {}", assignment.getId(), e.getMessage());
       }
     }
 
@@ -808,10 +807,10 @@ public class SearchTextServiceImpl implements ISearchTextService {
         if (updatedDiscussions.isPresent()) {
           logger.info("Successfully updated discussions: {}", updatedDiscussions.get().getId());
         } else {
-          logger.info("Failed to update discussions: {}", updatedDiscussions.get().getId());
+          logger.info("Failed to update discussions: {}", discussionTopic.getId());
         }
       } catch (IOException e) {
-        logger.error("Error updating discussions: {} - {}", updatedDiscussions.get().getId(),
+        logger.error("Error updating discussions: {} - {}", discussionTopic.getId(),
             e.getMessage());
       }
     }
