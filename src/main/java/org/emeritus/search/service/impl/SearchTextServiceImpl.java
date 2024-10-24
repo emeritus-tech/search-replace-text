@@ -32,6 +32,7 @@ import org.emeritus.canvas.requestOptions.GetSingleCourseOptions;
 import org.emeritus.canvas.requestOptions.ListCourseAssignmentsOptions;
 import org.emeritus.canvas.requestOptions.ListCoursePagesOptions;
 import org.emeritus.canvas.requestOptions.ListModulesOptions;
+import org.emeritus.search.dto.CourseItem;
 import org.emeritus.search.dto.CoursePageInfo;
 import org.emeritus.search.dto.ItemReplaceDto;
 import org.emeritus.search.dto.PageInfo;
@@ -644,18 +645,21 @@ public class SearchTextServiceImpl implements ISearchTextService {
   @Override
   public Boolean replaceSelectedItemsForCourse(ItemReplaceDto itemReplaceDto) throws IOException {
 
-    // Group by type and get the IDs for each type
-    Map<String, List<Long>> idsByType = itemReplaceDto.getItemIdsMap().entrySet().stream()
-        .collect(Collectors.groupingBy(Map.Entry::getValue, // Group by type
-            Collectors.mapping(Map.Entry::getKey, Collectors.toList()) // Collect IDs for each type
-        ));
-
-
     // Iterate through each course ID and find matching text
-    for (String courseId : itemReplaceDto.getCourseIds()) {
-      List<Page> pages = listPagesInCourse(courseId);
-      List<DiscussionTopic> discussionTopics = getCourseAllDiscussionTopics(courseId);
-      List<Assignment> assignments = listCourseAssignments(courseId);
+    for (CourseItem courseItem : itemReplaceDto.getCourseItems()) {
+
+      // Group by type and get the IDs for each type
+      Map<String, List<Long>> idsByType = courseItem.getItemIdsMap().entrySet().stream()
+          .collect(Collectors.groupingBy(Map.Entry::getValue, // Group by type
+              Collectors.mapping(Map.Entry::getKey, Collectors.toList()) // Collect IDs for each
+                                                                         // type
+          ));
+
+
+      List<Page> pages = listPagesInCourse(courseItem.getCourseId());
+      List<DiscussionTopic> discussionTopics =
+          getCourseAllDiscussionTopics(courseItem.getCourseId());
+      List<Assignment> assignments = listCourseAssignments(courseItem.getCourseId());
 
       // Iterate over the map and add type checks
       for (Map.Entry<String, List<Long>> entry : idsByType.entrySet()) {
@@ -665,12 +669,14 @@ public class SearchTextServiceImpl implements ISearchTextService {
         // Check for specific types and perform actions
         if (type.equals(PAGE)) {
           logger.info("Processing page with IDs: {}", ids);
-          filterPagesMatchesWithIdsAndUpdate(pages, ids, courseId, itemReplaceDto);
+          filterPagesMatchesWithIdsAndUpdate(pages, ids, courseItem.getCourseId(), itemReplaceDto);
         } else if (type.equals(ASSIGNMENT)) {
           logger.info("Processing assignment with IDs: {}", ids);
-          filterAssignmentsMatchesWithIdsAndUpdate(assignments, ids, courseId, itemReplaceDto);
+          filterAssignmentsMatchesWithIdsAndUpdate(assignments, ids, courseItem.getCourseId(),
+              itemReplaceDto);
         } else if (type.equals(DISCUSSION)) {
-          filterDiscussionsMatchesWithIdsAndUpdate(discussionTopics, ids, courseId, itemReplaceDto);
+          filterDiscussionsMatchesWithIdsAndUpdate(discussionTopics, ids, courseItem.getCourseId(),
+              itemReplaceDto);
           logger.info("Processing discussion with IDs: {}", ids);
         }
       }
