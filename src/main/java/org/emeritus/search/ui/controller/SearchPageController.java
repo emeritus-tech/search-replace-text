@@ -117,6 +117,26 @@ public class SearchPageController {
     return "searchresult.html";
   }
 
+  @Operation(summary = "Get find text result", description = "Get find text result")
+  @GetMapping("/ui/v1/find")
+  public String findTextAcrossCourses(Model model,
+      @RequestParam(value = "courseIds", required = true) List<String> courseIds,
+      @RequestParam(value = "textToFind", required = true) String textToFind,
+      @RequestParam(value = "textToReplace", required = false) String textToReplace)
+      throws IOException {
+    SearchPageModel pageModel = SearchPageModel.builder().build();
+    logger.info("courseIds : {} ", courseIds);
+    SearchReplaceDto searchReplaceDto = SearchReplaceDto.builder().courseIds(courseIds)
+        .sourceText(textToFind).textToBeReplace(textToReplace).build();
+    List<CoursePageInfo> matchingPages = searchTextService.findTextAcrossCourses(searchReplaceDto);
+    logger.info("matches results : {} ", matchingPages);
+    pageModel.setMatchingPages(matchingPages);
+    pageModel.setBrandColors(canvasService.getBrandColors());
+    model.addAttribute("model", pageModel);
+    model.addAttribute("baseUrl", baseUrl);
+    return "searchresult.html";
+  }
+
 
   /**
    * UI exception.
